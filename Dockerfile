@@ -110,5 +110,9 @@ USER node
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
 
+# Health check: the slim image ships without wget/curl, so use Node's built-in fetch
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD ["node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+
 # Start Next.js standalone server
 CMD ["node", "server.js"]
